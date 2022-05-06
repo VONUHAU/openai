@@ -3,7 +3,8 @@ import { useState } from "react";
 import styles from "./index.module.css";
 
 export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
+  const [productDes, setProductDescription] = useState("");
+  const [maxLength, setMaxLength] = useState(260);
   const [result, setResult] = useState();
 
   async function onSubmit(event) {
@@ -13,34 +14,53 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ animal: animalInput }),
+      body: JSON.stringify({ productDes, max: maxLength}),
     });
     const data = await response.json();
     setResult(data.result);
-    setAnimalInput("");
+    setProductDescription(result);
   }
 
   return (
     <div>
       <Head>
         <title>OpenAI Quickstart</title>
-        <link rel="icon" href="/dog.png" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <main className={styles.main}>
-        <img src="/dog.png" className={styles.icon} />
-        <h3>Name my pet</h3>
+       
+        <h3>Copy Suggestion</h3>
         <form onSubmit={onSubmit}>
-          <input
+          <textarea
+            rows = {6}
             type="text"
-            name="animal"
-            placeholder="Enter an animal"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
+            name="productDes"
+            placeholder="Describe your product/service"
+            value={productDes}
+            onChange={(e) => setProductDescription(e.target.value)}
           />
-          <input type="submit" value="Generate names" />
+        <p style={{marginTop: 0}}> Maximum length</p>
+
+          <div style={{display: "flex", width: "100%", justifyContent: "space-between"}}>
+            
+            <input type="range" name="max"
+            min="50" max="400"
+            class="slider"
+            value={maxLength}
+            style={{marginBottom: "24px", width: "90%"}}
+            onChange={(e) => setMaxLength(e.target.value)}/>
+            <label > {maxLength}</label>
+          </div>
+          
+         
+          <input type="submit" value="Generate copy" />
         </form>
-        <div className={styles.result}>{result}</div>
+        <div style={{width: "520px"}}>
+            <h4 style={{textAlign: "left"}}> Result </h4>
+            <div className={styles.result}>{result}</div>
+        </div>
+        
       </main>
     </div>
   );
